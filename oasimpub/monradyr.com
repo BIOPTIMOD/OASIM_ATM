@@ -1,5 +1,5 @@
-#!/bin/bash  
-IRRDIR=/gpfs/scratch/userexternal/plazzari/OASIM_HF/OUTPUT/
+#! /bin/bash  
+IRRDIR=/g100_scratch/userexternal/plazzari/OASIM/OUTPUT/
 yyyymmdd=`cat bcs/yr.dat`
 YR=$( echo $yyyymmdd | cut -c 1-4)
 MON=$( echo $yyyymmdd | cut -c 5-6)
@@ -13,9 +13,9 @@ echo 'JDAY ' $JDAY
 IRRDIRYR=$IRRDIR/$yyyymmdd
 if [ ! -d $IRRDIRYR ] ; then mkdir $IRRDIRYR ; fi
 cd src
-rm *.o
+#rm *.o
 #make monrad
-./compile.sh
+#./compile.sh
 cp monrad ../
 cd ../
 #  
@@ -29,19 +29,19 @@ do
  fi
 done
 
-ln -fs /gpfs/scratch/userexternal/plazzari/OASIM_HF/CREATE_INPUT_ECMWF/output/opt${yyyymmdd}_ECMWF.nc opt.nc
-ln -fs /gpfs/scratch/userexternal/plazzari/OASIM_HF/CREATE_INPUT_ECMWF/output/clouds${yyyymmdd}_ECMWF.nc clouds.nc
+ln -fs /g100_scratch/userexternal/plazzari/OASIM/OASIM_ATM/tools/CREATE_INPUT_ECMWF/output/opt${yyyymmdd}_ECMWF.nc opt.nc
+ln -fs /g100_scratch/userexternal/plazzari/OASIM/OASIM_ATM/tools/CREATE_INPUT_ECMWF/output/clouds${yyyymmdd}_ECMWF.nc clouds.nc
 
 #
 #  Run
 echo $JDAY > day.dat
 echo $MON > month.dat
 echo $YR  > year.dat
-if [ ! -f $IRRDIRYR/swr$yyyymmdd.dat.gz ]
- then
+#if [ ! -f $IRRDIRYR/swr$yyyymmdd.dat.gz ]
+# then
    cp -p atmdata/modaer$YR$MON.dat.gz modaer.dat.gz
    gunzip modaer.dat.gz
-  fi
+#  fi
   ./monrad > out
   mv out $IRRDIRYR/out$yyyymmdd
   if [ -f modaer.dat ] ; then rm modaer.dat ; fi
@@ -78,5 +78,5 @@ if [ ! -f $IRRDIRYR/swr$yyyymmdd.dat.gz ]
   gzip eds$yyyymmdd.nc
   mv eds$yyyymmdd.nc.gz $IRRDIRYR
 
-fi
+#fi
 #
