@@ -1,21 +1,17 @@
 #! /bin/bash
 
 
-module purge
-conda activate python_conda
 
-while read yyyymmdd ;
-do
+MASKFILE=/g100_scratch/userexternal/gbolzon0/DEBUG/OGSTM/wrkdir/MODEL/meshmask.nc
 
-echo "$yyyymmdd"
 
-INPUTFILE=/g100_scratch/userexternal/plazzari/OASIM/ECMWF/ERAINTERIM_2017.nc
-OUTFILE=/g100_scratch/userexternal/OASIM/output_${yyyymmdd}.nc
+INPUTFILE=/g100_scratch/userexternal/gbolzon0/OASIM/20190101-ECMWF---AM0100-MEDATL-b20190102_an-fv12.00.nc
+OUTDIR=/g100_scratch/userexternal/gbolzon0/OASIM_ATM/out
 
 
 
 
-python3 create_opt_nc.py -i $INPUTFILE -o $OUTFILE -d ${yyyymmdd} -m mask.nc
-python3  create_cloud_nc.py  ${yyyymmdd}
+echo python create_opt_nc.py -i $INPUTFILE -o $OUTDIR  -m $MASKFILE
+#python3  create_cloud_nc.py  ${yyyymmdd}
 
-done < lista_date.txt
+
