@@ -11,7 +11,7 @@ OUTDIR=/g100_scratch/userexternal/gbolzon0/OASIM_ATM/out
 
 
 
-echo python create_opt_nc.py -i $INPUTFILE -o $OUTDIR  -m $MASKFILE
+python daily_oasim_input_gen.py -i $INPUTFILE -o $OUTDIR  -m $MASKFILE
 #python3  create_cloud_nc.py  ${yyyymmdd}
 
 

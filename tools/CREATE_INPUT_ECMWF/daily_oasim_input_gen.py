@@ -2,14 +2,14 @@ import argparse
 
 def argument():
     parser = argparse.ArgumentParser(description = '''
-    Generates opt file for OASIM by reading ECMWF file
+    Generates daily files for OASIM by reading ECMWF file provided by CMCC
     ''',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(   '--inputfile', '-i',
                                 type = str,
                                 required = True,
-                                help = ''' Input ECMWF file'''
+                                help = ''' Input CMCC file'''
                                 )
     parser.add_argument(   '--maskfile', '-m',
                                 type = str,
@@ -125,7 +125,7 @@ def dumpfile(filename, maskObj, sp,msl, t2m,d2m, tcc,w10):
     ncvar = ncOUT.createVariable('t2m','f',('lat','lon'))
     setattr(ncvar,'units','K')
     setattr(ncvar,'long_name','2 metre temperature')
-    setattr(ncvar, 'code', 167)    
+    setattr(ncvar, 'code', 167)
     ncvar[:] = t2m
 
     ncvar = ncOUT.createVariable('tcc','f',('lat','lon'))
@@ -199,7 +199,3 @@ for iframe in range(nframes_in_day):
 # !!!! OCCORRE IMPORTARE ANCHE LA SURFACE PRESSURE sfcpr da ECMWF
 # !!!! CONTROLLARE SE SIA NECESSARIO DIVIDERE PER 100 IN QUANTO in GarAdl90 si definisce
 # e = h * es dove e=vapour pressure (ovvero es_Td) e h=relative humidity
- 
-
-
-
