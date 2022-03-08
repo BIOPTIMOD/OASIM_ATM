@@ -5,6 +5,7 @@ import numpy as np
 from scipy import interpolate
 
 inputfile="/g100_scratch/userexternal/plazzari/OASIM/MODIS_DATA/modcld0000.nc"
+input_clim="/g100_scratch/userexternal/gbolzon0/OASIM_ATM/tools/CREATE_INPUT_ECMWF/ERA5_Med.nc"
 TheMask=Mask('/g100_scratch/userexternal/gbolzon0/DEBUG/OGSTM/wrkdir/MODEL/meshmask.nc')
 OUTDIR="/g100_scratch/userexternal/gbolzon0/OASIM_ATM/out/"
 jpk,jpj,jpi = TheMask.shape
@@ -35,7 +36,7 @@ def getframe(filename,var, timeframe):
     M2d_orig=netcdf4.readfile(filename, var)[timeframe,J_start:J_end,I_start:I_end]    
     return  interp(M2d_orig)
 
-def dumpfile(filename, maskObj, cdrem,cldtcm):
+def dumpfile(filename, maskObj, cdrem,cldtcm,tclw,tco3):
     ncOUT   = netCDF4.Dataset(filename,"w");
 
     ncOUT.createDimension('lon',jpi);
@@ -56,16 +57,30 @@ def dumpfile(filename, maskObj, cdrem,cldtcm):
     setattr(ncvar, 'long_name',  'TODO' )
     setattr(ncvar, 'units','TODO' )
     setattr(ncvar, 'inputfile', inputfile )
-    
+
     ncvar = ncOUT.createVariable('cldtcm','f',('lat','lon'))
     ncvar[:]=cdrem
     setattr(ncvar, 'long_name',  'TODO' )
     setattr(ncvar, 'units','TODO' )
-    setattr(ncvar, 'inputfile', inputfile )  
+    setattr(ncvar, 'inputfile', inputfile)
     
+    ncvar = ncOUT.createVariable('tclcw','f',('lat','lon'))
+    ncvar[:]=tclw
+    setattr(ncvar, 'long_name',  'Total column cloud liquid water' )
+    setattr(ncvar, 'units','kg m**-2' )
+    setattr(ncvar, 'inputfile', input_clim)
 
+    ncvar = ncOUT.createVariable('tco3','f',('lat','lon'))
+    ncvar[:]=tco3
+    setattr(ncvar, 'long_name',  'Total column ozone' )
+    setattr(ncvar, 'units','kg m**-2' )
+    setattr(ncvar, 'inputfile', input_clim)
 
     ncOUT.close()
+
+
+tclw = np.ones((jpj,jpi),dtype=np.float32)*0.05
+tco3 = np.ones((jpj,jpi),dtype=np.float32)*0.0065
 
 
 
@@ -74,10 +89,7 @@ for iframe in range(12):
     outfile = "%satm.yyyy%02d01-00:00:00.nc" %(OUTDIR,iframe) 
     cdrem = getframe(inputfile, "cdrem", iframe)
     cldtcm = getframe(inputfile, "cldtcm", iframe)
-    dumpfile(outfile,TheMask,cdrem,cldtcm)
-
-
-
+    dumpfile(outfile,TheMask,cdrem,cldtcm, tclw,tco3)
 
 
 
