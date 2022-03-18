@@ -1,0 +1,8 @@
+module purge
+module load profile/advanced
+module load autoload
+module load intel
+module load intelmpi/2017--binary
+module load netcdff
+module load cmake/3.5.2
+ifort -g  IOnc.f90 dat2NetCDF.F -I $NETCDFF_INC -L $NETCDFF_LIB -lnetcdff  -o dat2NetCDF.xx
