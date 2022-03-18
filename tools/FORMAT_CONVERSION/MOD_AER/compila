@@ -1,0 +1,14 @@
+module load autoload
+module load intel/oneapi-2021--binary
+module load intelmpi/oneapi-2021--binary
+module load mkl/oneapi-2021--binary
+module load cmake/3.18.4--gcc--10.2.0
+module load netcdf/4.7.4--oneapi--2021.2.0-ifort
+module load netcdff/4.5.3--oneapi--2021.2.0-ifort
+# modules define these $.._HOME env variable
+export NETCDF_INC=$NETCDF_C_HOME/include
+export NETCDF_LIB=$NETCDF_C_HOME/lib
+export NETCDFF_INC=$NETCDF_FORTRAN_HOME/include
+export NETCDFF_LIB=$NETCDF_FORTRAN_HOME/lib
+
+ifort -g  IOnc.f90 dat2NetCDF.F -I $NETCDFF_INC -L $NETCDFF_LIB -lnetcdff  -o dat2NetCDF.xx
