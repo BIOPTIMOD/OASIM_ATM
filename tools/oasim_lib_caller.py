@@ -32,5 +32,5 @@ lat = TheMask.ylevels()
 
 
 j=100
-result = oasim_lib(time, lon[j,:], lat[j,:], sp[j,:],msl[j,:],d2m[j,:],t2m[j,:],tcc[j,:],ws10[j,:],tclw[j,:],tco3[j,:],cdrem[j,:],cldtcm[j,:], aerosol)
+result = oasim_lib(year, month, day, sec_start, sec_end, lon[j,:], lat[j,:], sp[j,:],msl[j,:],d2m[j,:],t2m[j,:],tcc[j,:],ws10[j,:],tclw[j,:],tco3[j,:],cdrem[j,:],cldtcm[j,:], aerosol)
 #result = oasim_lib(time, lon, lat, sp,msl,d2m,t2m,tcc,ws10,tclw,tco3,cdrem,cldtcm,aerosol)
