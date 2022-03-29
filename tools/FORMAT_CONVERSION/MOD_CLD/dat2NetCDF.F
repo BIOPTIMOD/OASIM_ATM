@@ -8,8 +8,8 @@ c  surface (0-).
       parameter(alon0=-180.0,alat0=-90.0)
       parameter(dlon=1.0,dlat=1.0)
       parameter(time=12)
-      CHARACTER(len=14) :: filein
-      CHARACTER(len=13) :: fileout
+      CHARACTER(len=100) :: filein
+      CHARACTER(len=100) :: fileout
       CHARACTER(len=17) :: date_start
       CHARACTER(len=17) :: date_end
       integer month
