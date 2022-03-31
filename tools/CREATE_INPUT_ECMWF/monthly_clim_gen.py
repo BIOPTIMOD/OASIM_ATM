@@ -6,7 +6,7 @@ from scipy import interpolate
 
 inputfile="/g100_scratch/userexternal/plazzari/OASIM/MODIS_DATA/modcld0000.nc"
 input_clim="/g100_scratch/userexternal/gbolzon0/OASIM_ATM/tools/CREATE_INPUT_ECMWF/ERA5_Med.nc"
-TheMask=Mask('/g100_scratch/userexternal/gbolzon0/DEBUG/OGSTM/wrkdir/MODEL/meshmask.nc')
+TheMask=Mask('/gss/gss_work/DRES_OGS_BiGe/gbolzon/masks/eas/V8C/meshmask.nc')
 OUTDIR="/g100_scratch/userexternal/gbolzon0/OASIM_ATM/out/"
 jpk,jpj,jpi = TheMask.shape
 
@@ -64,7 +64,7 @@ def dumpfile(filename, maskObj, cdrem,cldtcm,tclw,tco3):
     setattr(ncvar, 'units','TODO' )
     setattr(ncvar, 'inputfile', inputfile)
     
-    ncvar = ncOUT.createVariable('tclcw','f',('lat','lon'))
+    ncvar = ncOUT.createVariable('tclw','f',('lat','lon'))
     ncvar[:]=tclw
     setattr(ncvar, 'long_name',  'Total column cloud liquid water' )
     setattr(ncvar, 'units','kg m**-2' )
