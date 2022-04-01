@@ -2,7 +2,7 @@
 
 
 
-MASKFILE=/g100_scratch/userexternal/gbolzon0/DEBUG/OGSTM/wrkdir/MODEL/meshmask.nc
+MASKFILE=/gss/gss_work/DRES_OGS_BiGe/gbolzon/masks/eas/V8C/meshmask.nc
 
 
 INPUTFILE=/g100_scratch/userexternal/gbolzon0/OASIM/20190101-ECMWF---AM0100-MEDATL-b20190102_an-fv12.00.nc
