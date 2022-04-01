@@ -138,7 +138,7 @@ def dumpfile(filename, maskObj, sp,msl, t2m,d2m, tcc,w10):
     setattr(ncvar,'units','m/s')
     setattr(ncvar,'long_name','10 metre wind speed module')
     setattr(ncvar,'code', '165 and 166')
-    ncvar[:] = t2m
+    ncvar[:] = w10
 
     setattr(ncOUT, 'input_file', args.inputfile)
     ncOUT.close()
