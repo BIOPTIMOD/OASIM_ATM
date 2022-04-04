@@ -72,34 +72,67 @@ c   If MODIS re is available use it; otherwise use parameterized re above
       endif
       izero = 0
       do nc = 1,ncld
+       write(*,*) 'nc', nc
+!      write(*,*) 'clwp',clwp
+       write(*,*) 'asl',asl(nc)
+       write(*,*) 'bsl',bsl(nc)
+       write(*,*) 're',re
        tauc = clwp*(asl(nc)+bsl(nc)/re)
+       write(*,*) 'tauc',tauc
        oneomega = csl(nc) + dsl(nc)*re
+       write(*,*) 'oneomega',oneomega
        omega = 1.0 - oneomega
+       write(*,*) 'omega',omega
        g = esl(nc) + fsl(nc)*re
+       write(*,*) 'g',g
        b0 = 3.0/7.0*(1.0-g)
+       write(*,*) 'bo',b0
        bmu0 = 0.5 - 0.75*rmu0*g/(1.0+g)
+       write(*,*) 'bmu0',bmu0
        f = g*g
+       write(*,*) 'f',f
        U2 = U1*(1.0-((1.0-omega)/(7.0*omega*b0)))
+       write(*,*) 'U2',U2
        U2 = max(U2,0.0)
+       write(*,*) 'U2',U2
        alpha1 = U1*(1.0-omega*(1.0-b0))
+       write(*,*) 'alpha1',alpha1
        alpha2 = U2*omega*b0
+       write(*,*) 'alpha2',alpha2
        alpha3 = (1.0-f)*omega*bmu0
+       write(*,*) 'alpha3',alpha3
        alpha4 = (1.0-f)*omega*(1.0-bmu0)
+       write(*,*) 'alpha4',alpha4
        sqarg = alpha1*alpha1 - alpha2*alpha2
+       write(*,*) 'sqarg',sqarg
        sqarg = max(sqarg,1.0E-9)
+       write(*,*) 'sqarg',sqarg
 C bioptimod  sqarg = max(sqarg,1.0E-17)
        eps = sqrt(sqarg)
+       write(*,*) 'eps',eps
        rM = alpha2/(alpha1+eps)
+       write(*,*) 'rM',rM
        E = exp(-eps*tauc)
+       write(*,*) 'E',E
        val1 = 1.0 - omega*f
+       write(*,*) 'val1',val1
        val2 = eps*eps*rmu0*rmu0
+       write(*,*) 'val2',val2
        rnum = val1*alpha3 - rmu0*(alpha1*alpha3+alpha2*alpha4)
+       write(*,*) 'rnum',rnum
        rden = val1*val1 - val2
+       write(*,*) 'rden',riden
 c bioptimod added  + 0.00001 to avoid NaN
        gama1 = rnum/(rden + 0.00001)
+       write(*,*) 'gama1',gama1
        rnum = -val1*alpha4 - rmu0*(alpha1*alpha4+alpha2*alpha3)
+       write(*,*) 'rnum',rnum
 c bioptimod added  + 0.00001 to avoid NaN
        gama2 = rnum/(rden + 0.00001)
+       write(*,*) 'gama2',gama2
+       write(*,*) 'val1', val1
+       write(*,*) 'tauc', tauc
+       write(*,*) 'rum0', rmu0
        Tdb = exp(-val1*tauc/rmu0)
        val3 = 1.0 - E*E*rM*rM
 c bioptimod added  + 0.00001 to avoid NaN
@@ -113,6 +146,7 @@ c       Tdir = max(Tdir,0.0)
        Tcs(nc) = Tdir
        if (Tcs(nc) .lt. 0.0)izero=1
 c       Tcu(nc) = Tdif
+      STOP
       enddo
       if (izero .eq. 1)then    !block negative diffuse irrads
        do nc = 1,ncld

@@ -15,7 +15,7 @@ c
       real atmtmp(iatm,jatm)
       real avhrrtau(iatm,jatm),avhrrtauclim(iatm,jatm)
       real facaer(nlt)
-c     real taua1d(nlt), asymp1d(nlt), ssalb1d(nlt)
+      real taua1d(nlt), asymp1d(nlt), ssalb1d(nlt)
       data flag /-0.9E10/
       data flagam /-0.01/
 c
@@ -47,10 +47,15 @@ c  File name: MODIS clouds -- if present use them for re
       imod0 = 0
 c  First seek out transient data
 
-      call readnc_global_float_2d('clouds.nc','ccov', ccovm)
-      call readnc_global_float_2d('clouds.nc','cldtc', cldtcm)
-      call readnc_global_float_2d('clouds.nc','rlwp', rlwpm)
-      call readnc_global_float_2d('clouds.nc','cdre', cdrem)
+c     call readnc_global_float_2d('clouds.nc','ccov', ccovm)
+c     call readnc_global_float_2d('clouds.nc','cldtc', cldtcm)
+c     call readnc_global_float_2d('clouds.nc','rlwp', rlwpm)
+c     call readnc_global_float_2d('clouds.nc','cdre', cdrem)
+
+      ccovm(:,:)  = 12.039429664611816
+      cldtcm(:,:) = 10.042508
+      rlwpm(:,:)  = 50.000000745058060
+      cdrem(:,:)  = 10.042508
 
 c  Check for valid data
       do j = 1,jcd
@@ -84,8 +89,11 @@ c   Normalize re to ISCCP avg = (10.0+11.8)/2um = mean of Kiehl and Han
        enddo
       enddo
 c  File name: ISCCP clouds -- use preferentially for cover and LWP 
-      call readnc_global_float_2d('clouds.nc','ccov', ccovi)
-      call readnc_global_float_2d('clouds.nc','rlwp', rlwpi)
+c     call readnc_global_float_2d('clouds.nc','ccov', ccovi)
+c     call readnc_global_float_2d('clouds.nc','rlwp', rlwpi)
+
+      ccovi(:,:)  = 12.039429664611816
+      rlwpi(:,:)  = 50.000000745058060
 
       ccov = ccovi
       rlwp = rlwpi
@@ -229,23 +237,29 @@ c
       endif
 c
 c  Read in cloudy day distributions
-      open(4,file='bcs/clddays.dat',status='old',form='formatted')
-      do imt = 28,ndmo
-       do icdy = 1,imt
-        read(4,'(31i3)')(icld(icdy,it),it=1,31)
+c     open(4,file='bcs/clddays.dat',status='old',form='formatted')
+c     do imt = 28,ndmo
+c      do icdy = 1,imt
+c       read(4,'(31i3)')(icld(icdy,it),it=1,31)
 c        write(6,'(i3,31i3)')icdy,(icld(icdy,it),it=1,31)
-       enddo
-      enddo
-      close(4)
+c      enddo
+c     enddo
+c     close(4)
 c
 c
 c *****************************************************************
 c  Read in other atmospheric optical parameters
-      call readnc_global_float_2d('opt.nc','slporg', slporg)
-      call readnc_global_float_2d('opt.nc','wsmorg', wsmorg)
-      call readnc_global_float_2d('opt.nc','rhorg', rhorg)
-      call readnc_global_float_2d('opt.nc','ozorg', ozorg)
-      call readnc_global_float_2d('opt.nc','wvorg', wvorg)
+c     call readnc_global_float_2d('opt.nc','slporg', slporg)
+c     call readnc_global_float_2d('opt.nc','wsmorg', wsmorg)
+c     call readnc_global_float_2d('opt.nc','rhorg', rhorg)
+c     call readnc_global_float_2d('opt.nc','ozorg', ozorg)
+c     call readnc_global_float_2d('opt.nc','wvorg', wvorg)
+
+      slporg = 1023.7713281250000
+      wsmorg = 10.000000000000000
+      rhorg  = 82.877071609070356
+      ozorg  = 6.5000001341104507E-003
+      wvorg  = 2.0400861812003965
 c     open(4,file='opt.dat',status='old',form='unformatted')
 c     read(4)imc,jmc
 c     do m = 1,imo
@@ -356,10 +370,10 @@ c******************************************************************
 c  Read in aerosols
       taua = flagam
 c   Use MODIS aerosols if available
-      open(4,file='modaer.dat',status='old',form='unformatted',
-     *     err=7)
-      read(4)taua,asymp,ssalb
-      close(4)
+c     open(4,file='modaer.dat',status='old',form='unformatted',
+c    *     err=7)
+c     read(4)taua,asymp,ssalb
+c     close(4)
       do nl = 1,nlt
       do j = 1,jcd
       do i = 1,icd

@@ -192,8 +192,8 @@ c   Mean surface reflectance
         enddo
        enddo
       enddo
-      call monavgswr(rodihs,rosihs,avgd,avgs)
-      call monavgpar(rodihs,rosihs,avgd,avgs)
-      call monavgday0m(rodihs,rosihs,avgd,avgs)
+C     call monavgswr(rodihs,rosihs,avgd,avgs)
+C     call monavgpar(rodihs,rosihs,avgd,avgs)
+C     call monavgday0m(rodihs,rosihs,avgd,avgs)
 c
       end

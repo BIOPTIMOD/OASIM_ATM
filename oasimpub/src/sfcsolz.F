@@ -104,13 +104,13 @@ c  vector (geodetic unit vector)
       do jl = 1,jm
         do il = 1,im
 
-         xlon = 0.0
+         xlon = 7.2916665
 c        xlon = xlon1 + dlon * real(il,4)
          rlon = xlon/rad
          cosx = cos(rlon)
          sinx = sin(rlon)
 
-         ylat = ylat1 + dlat * real(jl,4)
+         ylat = 42.9375
          rlat = ylat/rad
          cosy = cos(rlat)
          siny = sin(rlat)
