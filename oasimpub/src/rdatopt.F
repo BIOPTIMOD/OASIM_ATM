@@ -55,7 +55,6 @@ c     call readnc_global_float_2d('clouds.nc','cdre', cdrem)
       ccovm(:,:)  = 12.039429664611816
       cldtcm(:,:) = 10.042508
       rlwpm(:,:)  = 50.000000745058060
-      cdrem(:,:)  = 10.042508
 
 c  Check for valid data
       do j = 1,jcd
@@ -88,6 +87,7 @@ c   Normalize re to ISCCP avg = (10.0+11.8)/2um = mean of Kiehl and Han
         endif
        enddo
       enddo
+      cdre(:,:)  = 10.042508
 c  File name: ISCCP clouds -- use preferentially for cover and LWP 
 c     call readnc_global_float_2d('clouds.nc','ccov', ccovi)
 c     call readnc_global_float_2d('clouds.nc','rlwp', rlwpi)

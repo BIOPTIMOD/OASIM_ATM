@@ -77,9 +77,13 @@ c   If MODIS re is available use it; otherwise use parameterized re above
        write(*,*) 'asl',asl(nc)
        write(*,*) 'bsl',bsl(nc)
        write(*,*) 're',re
+       write(*,*) 'cre',cre
+       write(*,*) 'rmu0',rmu0
        tauc = clwp*(asl(nc)+bsl(nc)/re)
        write(*,*) 'tauc',tauc
        oneomega = csl(nc) + dsl(nc)*re
+       write(*,*) 'cls',csl(nc)
+       write(*,*) 'dsl',dsl(nc)
        write(*,*) 'oneomega',oneomega
        omega = 1.0 - oneomega
        write(*,*) 'omega',omega
@@ -104,6 +108,7 @@ c   If MODIS re is available use it; otherwise use parameterized re above
        alpha4 = (1.0-f)*omega*(1.0-bmu0)
        write(*,*) 'alpha4',alpha4
        sqarg = alpha1*alpha1 - alpha2*alpha2
+!      sqarg = (alpha1+alpha2) * (alpha1-alpha2)
        write(*,*) 'sqarg',sqarg
        sqarg = max(sqarg,1.0E-9)
        write(*,*) 'sqarg',sqarg
@@ -142,6 +147,8 @@ c bioptimod added  + 0.00001 to avoid NaN
 c       Rdir = -gama2*Rdif - gama1*Tdb*Tdif + gama1
        Tdir = -gama2*Tdif - gama1*Tdb*Rdif + gama2*Tdb
 c       Tdir = max(Tdir,0.0)
+       write(*,*) "Tdb", Tdb
+       write(*,*) "Tdir", Tdir
        Tcd(nc) = Tdb
        Tcs(nc) = Tdir
        if (Tcs(nc) .lt. 0.0)izero=1

@@ -22,6 +22,9 @@ c  Compute sun vector
 c   Compute unit sun vector in geocentric inertial coordinates
       sec = gmt*3600.0D0
       call sun2000(radeg,iyr,iday,sec,suni,rs)
+      if ( (il .EQ. 1 ) .AND. (jl .EQ. 1 ))  then
+         write(*,*) "suni",suni
+      endif
 
 c   Get Greenwich mean sidereal angle
       day = float(iday) + sec/86400.0D0
@@ -97,6 +100,10 @@ c    Note that the Julian day starts at noon on the specified date
 
 c  Compute solar ephemeris parameters
 	call ephparms(t,xls,gs,xlm,omega)
+C       write(*,*) "xls", xls
+C       write(*,*) "gs", gs
+C       write(*,*) "xlm", xlm
+C       write(*,*) "omega", omega
 
 c  Check if need to compute nutation corrections for this day
 	nt = int(t)

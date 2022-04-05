@@ -67,6 +67,8 @@ c  Integrate to obtain mean cosine solar zenith angle
 
        enddo
       enddo
+      write(*,*) 'solz',solz(1,1)
+      solz(:,:) = 77.8743295759092D0
 c
       return
       end

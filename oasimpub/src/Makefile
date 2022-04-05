@@ -9,8 +9,8 @@ LOUT=	clrtrans.o lidata.o light.o light_verbose.o ocalbedo.o rdatopt.o IOnc.o se
 	setlte.o sfcirr.o sfcsolz.o slingo.o slingo_verbose.o sunmod.o findbinxy2.o \
 	monavgpar.o getarea.o monavgswr.o monavgday0m.o 
 
-monrad: monrad.F $(LOUT) 
-	$(FTRAN) -L $(NETCDFF_LIB)  -lnetcdff -o monrad monrad.F $(LOUT) 
+monrad:  monrad.F $(LOUT) 
+	$(FTRAN) -L $(NETCDFF_LIB) -lnetcdff -o monrad monrad.F $(LOUT) 
 
 clrtrans.o: clrtrans.F
 	$(FTRAN) -c clrtrans.F
