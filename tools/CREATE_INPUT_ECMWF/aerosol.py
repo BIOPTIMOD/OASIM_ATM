@@ -9,8 +9,8 @@ INPUTDIR="/g100_scratch/userexternal/gbolzon0/OASIM/modaer/NC/"
 OUTDIR="/g100_scratch/userexternal/gbolzon0/OASIM_ATM/out/"
 
 
-TheMask=Mask('/g100_scratch/userexternal/gbolzon0/DEBUG/OGSTM/wrkdir/MODEL/meshmask.nc')
-TL=TimeList.fromfilenames(None, INPUTDIR, "modaer*", prefix="modaer", dateformat="%Y%m")
+TheMask=Mask('/g100_scratch/userexternal/gbolzon0/V9C/DEV_OASIM_INPUTS/wrkdir/MODEL/meshmask.nc')
+TL=TimeList.fromfilenames(None, INPUTDIR, "modaer201901*", prefix="modaer", dateformat="%Y%m")
 
 jpk,jpj,jpi = TheMask.shape
 
