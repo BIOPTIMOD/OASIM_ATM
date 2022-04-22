@@ -145,7 +145,7 @@ def dumpfile(filename, maskObj, sp,msl, t2m,d2m, tcc,w10):
 
 
 for iframe in range(nframes_in_day):
-    d=datetime.strptime(yyyymmdd,'%Y%m%d') + timedelta(hours = deltaH*iframe)
+    d=datetime.strptime(yyyymmdd,'%Y%m%d') + timedelta(hours = (deltaH*iframe + deltaH/2))
     outfile = OUTDIR + d.strftime("atm.%Y%m%d-%H:%M:%S.nc")
     print(outfile)
     
