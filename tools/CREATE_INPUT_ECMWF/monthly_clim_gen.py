@@ -4,37 +4,45 @@ from commons.mask import Mask
 import numpy as np
 from scipy import interpolate
 
-inputfile="/g100_scratch/userexternal/plazzari/OASIM/MODIS_DATA/modcld0000.nc"
-input_clim="/g100_scratch/userexternal/gbolzon0/OASIM_ATM/tools/CREATE_INPUT_ECMWF/ERA5_Med.nc"
+INPUT_ERA5="/g100_work/OGS_prod100/OPA/V9C/RUNS_SETUP/PREPROC/OPTICS/CLIM_ERA5/"
+INPUT_MODCLD="/g100_scratch/userexternal/plazzari/OASIM/modcld/NC/"
+
 TheMask=Mask('/gss/gss_work/DRES_OGS_BiGe/gbolzon/masks/eas/V8C/meshmask.nc')
 OUTDIR="/g100_scratch/userexternal/gbolzon0/OASIM_ATM/out/"
 jpk,jpj,jpi = TheMask.shape
 
-xMin = TheMask.xlevels[0,0]
-xMax = TheMask.xlevels[0,-1]
-yMin = TheMask.ylevels[0,0]
-yMax = TheMask.ylevels[-1,0]
+xMin = TheMask.lon[0]
+xMax = TheMask.lon[-1]
+yMin = TheMask.lat[0]
+yMax = TheMask.lat[-1]
 
-lon = netcdf4.readfile(inputfile, 'lon')
-lat = netcdf4.readfile(inputfile, 'lat')
 
-I_start = np.argmin(np.abs(lon - xMin))
-I_end   = np.argmin(np.abs(lon - xMax))
-J_start = np.argmin(np.abs(lat - yMin))
-J_end   = np.argmin(np.abs(lat - yMax))
 
-lon = lon[I_start:I_end]
-lat = lat[J_start:J_end]
-
-def interp(Min):
+def interp(Min,lon,lat):
     f = interpolate.interp2d(lon, lat, Min, kind='linear')
-    Mout  = f(TheMask.xlevels[0,:], TheMask.ylevels[:,0])
+    Mout  = f(TheMask.lon, TheMask.lat)
     return Mout
 
 
-def getframe(filename,var, timeframe):
-    M2d_orig=netcdf4.readfile(filename, var)[timeframe,J_start:J_end,I_start:I_end]    
-    return  interp(M2d_orig)
+def getMap(filename,var,lon,lat):
+    I_start = np.argmin(np.abs(lon - xMin))
+    I_end   = np.argmin(np.abs(lon - xMax))
+    if lat[0]< lat[-1] : #increasing, MODCLD_files
+        J_start = np.argmin(np.abs(lat - yMin))
+        J_end   = np.argmin(np.abs(lat - yMax))
+        M2d_orig=netcdf4.readfile(filename, var)[0, J_start:J_end,I_start:I_end]
+        local_lon = lon[I_start:I_end]
+        local_lat = lat[J_start:J_end]
+    else: # decreasing, ERA5 files
+        J_start = np.argmin(np.abs(lat - yMax))
+        J_end   = np.argmin(np.abs(lat - yMin))
+        M2d_orig=netcdf4.readfile(filename, var)[J_start:J_end,I_start:I_end]
+        local_lon = lon[I_start:I_end]
+        local_lat = lat[J_start:J_end]
+        M2d_orig = M2d_orig[-1::-1,:]
+        local_lat = local_lat[-1::-1]
+
+    return  interp(M2d_orig,local_lon, local_lat)
 
 def dumpfile(filename, maskObj, cdrem,cldtcm,tclw,tco3):
     ncOUT   = netCDF4.Dataset(filename,"w");
@@ -56,39 +64,51 @@ def dumpfile(filename, maskObj, cdrem,cldtcm,tclw,tco3):
     ncvar[:]=cdrem
     setattr(ncvar, 'long_name',  'TODO' )
     setattr(ncvar, 'units','TODO' )
-    setattr(ncvar, 'inputfile', inputfile )
+    setattr(ncvar, 'orig', 'MODCLD' )
 
     ncvar = ncOUT.createVariable('cldtcm','f',('lat','lon'))
     ncvar[:]=cdrem
     setattr(ncvar, 'long_name',  'TODO' )
     setattr(ncvar, 'units','TODO' )
-    setattr(ncvar, 'inputfile', inputfile)
+    setattr(ncvar, 'orig', 'MODCLD')
     
     ncvar = ncOUT.createVariable('tclw','f',('lat','lon'))
     ncvar[:]=tclw
     setattr(ncvar, 'long_name',  'Total column cloud liquid water' )
     setattr(ncvar, 'units','kg m**-2' )
-    setattr(ncvar, 'inputfile', input_clim)
+    setattr(ncvar, 'orig', 'ERA5_clim')
 
     ncvar = ncOUT.createVariable('tco3','f',('lat','lon'))
     ncvar[:]=tco3
     setattr(ncvar, 'long_name',  'Total column ozone' )
     setattr(ncvar, 'units','kg m**-2' )
-    setattr(ncvar, 'inputfile', input_clim)
+    setattr(ncvar, 'orig', 'ERA5_clim')
 
     ncOUT.close()
 
 
-tclw = np.ones((jpj,jpi),dtype=np.float32)*0.05
-tco3 = np.ones((jpj,jpi),dtype=np.float32)*0.0065
 
 
+era5file="%s%02d.%s.nc"  %(INPUT_ERA5,1,'tco3')
+lon_era5 = netcdf4.readfile(era5file, 'lon')
+lat_era5 = netcdf4.readfile(era5file, 'lat')
 
-for iframe in range(12):
-    month='%02d' %iframe 
+modcldfile="%smodcld%02d.nc"  %(INPUT_MODCLD,1)
+lon_cld = netcdf4.readfile(modcldfile, 'lon')
+lat_cld = netcdf4.readfile(modcldfile, 'lat')
+
+
+for iframe in range(1,13):
+    inputfile = "%s%02d.%s.nc"  %(INPUT_ERA5,iframe,'tco3')
+    tco3= getMap(inputfile, 'tco3',lon_era5,lat_era5)
+    inputfile = "%s%02d.%s.nc"  %(INPUT_ERA5,iframe,'tclw')
+    tclw= getMap(inputfile, 'tclw',lon_era5,lat_era5)
+
+    inputfile = "%smodcld%02d.nc"  %(INPUT_MODCLD,iframe)
+
     outfile = "%satm.yyyy%02d01-00:00:00.nc" %(OUTDIR,iframe) 
-    cdrem = getframe(inputfile, "cdrem", iframe)
-    cldtcm = getframe(inputfile, "cldtcm", iframe)
+    cdrem  = getMap(inputfile, "cdrem" , lon_cld, lat_cld)
+    cldtcm = getMap(inputfile, "cldtcm", lon_cld, lat_cld)
     dumpfile(outfile,TheMask,cdrem,cldtcm, tclw,tco3)
 
 
