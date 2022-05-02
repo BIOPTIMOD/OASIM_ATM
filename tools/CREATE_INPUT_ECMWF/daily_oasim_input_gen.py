@@ -6,7 +6,7 @@ def argument():
     ''',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    parser.add_argument(   '--inputfile', '-i',
+    parser.add_argument(   '--inputdir', '-i',
                                 type = str,
                                 required = True,
                                 help = ''' Input CMCC file'''
@@ -34,22 +34,33 @@ from commons import netcdf4
 import numpy as np
 from scipy import interpolate
 from commons.mask import Mask
+from commons.Timelist import TimeList
 import netCDF4
 from commons.utils import addsep
-
+try:
+    from mpi4py import MPI
+    comm  = MPI.COMM_WORLD
+    rank  = comm.Get_rank()
+    nranks =comm.size
+except:
+    rank   = 0
+    nranks = 1
 
 
 TheMask=Mask(args.maskfile)
 jpk,jpj,jpi = TheMask.shape
-filename=args.inputfile
+
+INPUTDIR=addsep(args.inputdir)
 OUTDIR = addsep(args.outdir)
 
+TL = TimeList.fromfilenames(None, INPUTDIR, "*nc", prefix="", dateformat="%Y%m%d")
 
+filename=TL.filelist[0]
 ncIN=netCDF4.Dataset(filename)
 nframes_in_day = ncIN.dimensions['time'].size
 ncIN.close()
 deltaH = int(24/nframes_in_day)
-yyyymmdd=os.path.basename(filename)[:8]
+
 
 
 
@@ -140,26 +151,28 @@ def dumpfile(filename, maskObj, sp,msl, t2m,d2m, tcc,w10):
     setattr(ncvar,'code', '165 and 166')
     ncvar[:] = w10
 
-    setattr(ncOUT, 'input_file', args.inputfile)
+    setattr(ncOUT, 'input_file', inputfile)
     ncOUT.close()
 
 
-for iframe in range(nframes_in_day):
-    d=datetime.strptime(yyyymmdd,'%Y%m%d') + timedelta(hours = (deltaH*iframe + deltaH/2))
-    outfile = OUTDIR + d.strftime("atm.%Y%m%d-%H:%M:%S.nc")
-    print(outfile)
-    
-    
-    msl = getframe(filename,'MSL' , iframe)
-    sp =  getframe(filename,'SP'  , iframe)
-    u10 = getframe(filename,'U10M', iframe)
-    v10 = getframe(filename,'V10M', iframe)
-    t2m = getframe(filename,'T2M' , iframe)
-    d2m = getframe(filename,'D2M' , iframe)
-    tcc = getframe(filename,'TCC' , iframe)
+for inputfile in TL.filelist[rank::nranks]:
+    yyyymmdd=os.path.basename(inputfile)[:8]
+    for iframe in range(nframes_in_day):
+        d=datetime.strptime(yyyymmdd,'%Y%m%d') + timedelta(hours = (deltaH*iframe + deltaH/2))
+        outfile = OUTDIR + d.strftime("atm.%Y%m%d-%H:%M:%S.nc")
+        print(outfile)
 
-    w10 = np.sqrt(u10**2 + v10**2)
-    dumpfile(outfile, TheMask, sp,msl, t2m,d2m, tcc,w10)
+
+        msl = getframe(filename,'MSL' , iframe)
+        sp =  getframe(filename,'SP'  , iframe)
+        u10 = getframe(filename,'U10M', iframe)
+        v10 = getframe(filename,'V10M', iframe)
+        t2m = getframe(filename,'T2M' , iframe)
+        d2m = getframe(filename,'D2M' , iframe)
+        tcc = getframe(filename,'TCC' , iframe)
+    
+        w10 = np.sqrt(u10**2 + v10**2)
+        dumpfile(outfile, TheMask, sp,msl, t2m,d2m, tcc,w10)
     
 
 # a1 = 611.21 # Pascal
