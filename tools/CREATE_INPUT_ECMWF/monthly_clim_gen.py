@@ -1,14 +1,55 @@
+import argparse
+
+def argument():
+    parser = argparse.ArgumentParser(description = '''
+    Generates monthly clim files for OASIM by cutting and interpolating:
+    - ERA5 climatology files for tclw tco3
+    - MODCLD climatology files for cldtcm cdrem
+    ''',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(   '--clim_era5', '-e',
+                                type = str,
+                                required = True,
+                                help = '''Clim ERA5 NetCDF dir'''
+                                )
+    parser.add_argument(   '--maskfile', '-m',
+                                type = str,
+                                required = True,
+                                help = ''' mask filename'''
+                                )
+
+    parser.add_argument(   '--clim_mod', '-M',
+                                type = str,
+                                required = True,
+                                help = '''Clim MODCLD NetCDF dir '''
+                                )
+    parser.add_argument(   '--outdir', '-o',
+                                type = str,
+                                required = True,
+                                help = ''' path of the output optical dir '''
+                                )
+
+    return parser.parse_args()
+
+
+args = argument()
+
+
+
+
 from commons import netcdf4
 import netCDF4
 from commons.mask import Mask
 import numpy as np
 from scipy import interpolate
+from commons.utils import addsep
 
-INPUT_ERA5="/g100_work/OGS_prod100/OPA/V9C/RUNS_SETUP/PREPROC/OPTICS/CLIM_ERA5/"
-INPUT_MODCLD="/g100_scratch/userexternal/plazzari/OASIM/modcld/NC/"
+INPUT_ERA5   = addsep(args.clim_era5)
+INPUT_MODCLD = addsep(args.clim_mod)
+OUTDIR       = addsep(args.outdir)
+TheMask      = Mask(args.maskfile)
 
-TheMask=Mask('/gss/gss_work/DRES_OGS_BiGe/gbolzon/masks/eas/V8C/meshmask.nc')
-OUTDIR="/g100_scratch/userexternal/gbolzon0/OASIM_ATM/out/"
 jpk,jpj,jpi = TheMask.shape
 
 xMin = TheMask.lon[0]

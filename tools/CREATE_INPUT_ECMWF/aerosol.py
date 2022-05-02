@@ -1,16 +1,48 @@
+import argparse
+
+def argument():
+    parser = argparse.ArgumentParser(description = '''
+    Generates monthly clim files for OASIM by cutting and interpolating:
+    - NASA modaer climatology files for: taua asymp ssalb
+    ''',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(   '--inputdir', '-i',
+                                type = str,
+                                required = True,
+                                help = '''Clim Nasa NetCDF dir'''
+                                )
+    parser.add_argument(   '--maskfile', '-m',
+                                type = str,
+                                required = True,
+                                help = ''' mask filename'''
+                                )
+
+    parser.add_argument(   '--outdir', '-o',
+                                type = str,
+                                required = True,
+                                help = ''' path of the output optical dir '''
+                                )
+
+    return parser.parse_args()
+
+
+args = argument()
+
+
+
 from commons import netcdf4
 import netCDF4
 from commons.mask import Mask
 import numpy as np
 from scipy import interpolate
-from commons.Timelist import TimeList
+from commons.utils import addsep
 
-INPUTDIR="/g100_scratch/userexternal/gbolzon0/OASIM/modaer/NC/"
-OUTDIR="/g100_scratch/userexternal/gbolzon0/OASIM_ATM/out/"
+INPUTDIR=addsep(args.inputdir)
+OUTDIR  =addsep(args.outdir)
 
 
-TheMask=Mask('/g100_scratch/userexternal/gbolzon0/V9C/DEV_OASIM_INPUTS/wrkdir/MODEL/meshmask.nc')
-TL=TimeList.fromfilenames(None, INPUTDIR, "modaer201901*", prefix="modaer", dateformat="%Y%m")
+TheMask=Mask(args.maskfile)
 
 jpk,jpj,jpi = TheMask.shape
 
@@ -20,7 +52,7 @@ xMax = TheMask.xlevels[0,-1]
 yMin = TheMask.ylevels[0,0]
 yMax = TheMask.ylevels[-1,0]
 
-inputfile=TL.filelist[0]
+inputfile="%smodaer%02d.nc" %(INPUTDIR, 1)
 lon = netcdf4.readfile(inputfile, 'lon')
 lat = netcdf4.readfile(inputfile, 'lat')
 
@@ -42,13 +74,18 @@ def readfile(filename,maskObj,var):
     mask0=TheMask.mask_at_level(0)
     Mout = np.ones((jpk,jpj,jpi),np.float32)*1.e+20
     M3d_orig=netcdf4.readfile(filename, var)[:,J_start:J_end,I_start:I_end]
+    M3d_orig[M3d_orig < -99] = 0.5
     nl,_,_= M3d_orig.shape
     for k in range(nl):
         M2d = interp(M3d_orig[k,:,:])
-        M2d[~mask0] = 1.e+20
         sea=M2d[mask0]
-        bad = (sea<0) | (sea > 2) | np.isnan(sea)
-        if bad.any(): raise ValueError('ferma qua')
+        negative = sea<0
+        if negative.any():
+            sea[negative]=0.5
+            print(filename, var, 'jl=', k)
+            print(negative.sum(), "negative values corrected with 0.5")
+        nans = np.isnan(sea)
+        if nans.any(): raise ValueError('Nans: stop')
         Mout[k,:,:] = M2d
     return Mout
 
@@ -94,9 +131,9 @@ def dumpfile(filename, maskObj, taua,asymp,ssalb):
 
 
 
-for i, inputfile in enumerate(TL.filelist):
-    
-    outfile = "%saero.%s.nc" %(OUTDIR,TL.Timelist[i].strftime('%Y%m%d-%H:%M:%S') )
+for iframe in range(1,13):
+    inputfile = "%smodaer%02d.nc" %(INPUTDIR, iframe)
+    outfile = "%saero.yyyy%02d01-00:00:00.nc" %(OUTDIR,iframe)
     print(outfile)
     taua  = readfile(inputfile,TheMask,'taua')
     asymp = readfile(inputfile,TheMask,'asymp')
