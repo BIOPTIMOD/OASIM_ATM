@@ -160,7 +160,7 @@ for inputfile in TL.filelist[rank::nranks]:
     for iframe in range(nframes_in_day):
         d=datetime.strptime(yyyymmdd,'%Y%m%d') + timedelta(hours = (deltaH*iframe + deltaH/2))
         outfile = OUTDIR + d.strftime("atm.%Y%m%d-%H:%M:%S.nc")
-        print(outfile)
+        print(outfile, flush=True)
 
 
         msl = getframe(filename,'MSL' , iframe)
