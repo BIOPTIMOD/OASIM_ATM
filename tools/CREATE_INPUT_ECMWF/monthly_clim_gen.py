@@ -108,7 +108,7 @@ def dumpfile(filename, maskObj, cdrem,cldtcm,tclw,tco3):
     setattr(ncvar, 'orig', 'MODCLD' )
 
     ncvar = ncOUT.createVariable('cldtcm','f',('lat','lon'))
-    ncvar[:]=cdrem
+    ncvar[:]=cldtcm
     setattr(ncvar, 'long_name',  'TODO' )
     setattr(ncvar, 'units','TODO' )
     setattr(ncvar, 'orig', 'MODCLD')
