@@ -36,6 +36,7 @@ import netCDF4
 from commons.mask import Mask
 import numpy as np
 from scipy import interpolate
+from commons.interpolators import shift
 from commons.utils import addsep
 
 INPUTDIR=addsep(args.inputdir)
@@ -45,6 +46,25 @@ OUTDIR  =addsep(args.outdir)
 TheMask=Mask(args.maskfile)
 
 jpk,jpj,jpi = TheMask.shape
+
+def smoother(M2d,mask2d):
+    NsmoothingCycles = 20
+    jpj,jpi = mask2d.shape
+    M2d[~mask2d] = np.nan
+    auxs = np.zeros((5,jpj,jpi),np.float32)
+    for _ in range(NsmoothingCycles):
+        auxs[0,:,:] = M2d
+        auxs[1,:,:] = shift(M2d,2,'r')
+        auxs[2,:,:] = shift(M2d,2,'l')
+        auxs[3,:,:] = shift(M2d,2,'u')
+        auxs[4,:,:] = shift(M2d,2,'l')
+        M2d = np.nanmean(auxs,axis=0)
+    return M2d
+
+def uniform(M2d,mask2d):
+    ii = mask2d & (M2d>0)
+    meanvalue = M2d[ii].mean()
+    return np.ones_like(M2d) * meanvalue
 
 
 xMin = TheMask.xlevels[0,0]
@@ -78,6 +98,8 @@ def readfile(filename,maskObj,var):
     nl,_,_= M3d_orig.shape
     for k in range(nl):
         M2d = interp(M3d_orig[k,:,:])
+        #M2d = smoother(M2d, mask0)
+        #M2d = uniform(M2d, mask0)
         sea=M2d[mask0]
         negative = sea<0
         if negative.any():
@@ -133,7 +155,7 @@ def dumpfile(filename, maskObj, taua,asymp,ssalb):
 
 for iframe in range(1,13):
     inputfile = "%smodaer%02d.nc" %(INPUTDIR, iframe)
-    outfile = "%saero.yyyy%02d01-00:00:00.nc" %(OUTDIR,iframe)
+    outfile = "%saero.yyyy%02d15-00:00:00.nc" %(OUTDIR,iframe)
     print(outfile)
     taua  = readfile(inputfile,TheMask,'taua')
     asymp = readfile(inputfile,TheMask,'asymp')

@@ -147,7 +147,7 @@ for iframe in range(1,13):
 
     inputfile = "%smodcld%02d.nc"  %(INPUT_MODCLD,iframe)
 
-    outfile = "%sclimatm.yyyy%02d01-00:00:00.nc" %(OUTDIR,iframe)
+    outfile = "%sclimatm.yyyy%02d15-00:00:00.nc" %(OUTDIR,iframe)
     cdrem  = getMap(inputfile, "cdrem" , lon_cld, lat_cld)
     cldtcm = getMap(inputfile, "cldtcm", lon_cld, lat_cld)
     dumpfile(outfile,TheMask,cdrem,cldtcm, tclw,tco3)
