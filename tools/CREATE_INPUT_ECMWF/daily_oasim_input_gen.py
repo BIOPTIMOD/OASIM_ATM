@@ -163,13 +163,13 @@ for inputfile in TL.filelist[rank::nranks]:
         print(outfile, flush=True)
 
 
-        msl = getframe(filename,'MSL' , iframe)
-        sp =  getframe(filename,'SP'  , iframe)
-        u10 = getframe(filename,'U10M', iframe)
-        v10 = getframe(filename,'V10M', iframe)
-        t2m = getframe(filename,'T2M' , iframe)
-        d2m = getframe(filename,'D2M' , iframe)
-        tcc = getframe(filename,'TCC' , iframe)
+        msl = getframe(inputfile,'MSL' , iframe)
+        sp =  getframe(inputfile,'SP'  , iframe)
+        u10 = getframe(inputfile,'U10M', iframe)
+        v10 = getframe(inputfile,'V10M', iframe)
+        t2m = getframe(inputfile,'T2M' , iframe)
+        d2m = getframe(inputfile,'D2M' , iframe)
+        tcc = getframe(inputfile,'TCC' , iframe)
     
         w10 = np.sqrt(u10**2 + v10**2)
         dumpfile(outfile, TheMask, sp,msl, t2m,d2m, tcc,w10)
