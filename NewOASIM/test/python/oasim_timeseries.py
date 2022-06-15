@@ -123,51 +123,19 @@ lat = np.array([42.9375], dtype=np.float64, order='F')
 lon = np.array([7.2916665], dtype=np.float64, order='F')
 olib = oasim_lib("../../OASIMlib/liboasim-py.so", "config.yaml", lat, lon)
 cunit = calc_unit(1, olib)
-DateTimeList_2h = DL.getTimeList("20190101-00:00:00","20190102-00:00:00", hours=2)
+dt = 7200 #seconds
+DateTimeList_2h = DL.getTimeList("20190101-00:00:00","20190102-00:00:00", seconds=dt)
 TL     = TimeList(DateTimeList_2h)
-
-
-#convert timelist frequency in seconds:
-if TL.inputFrequency.split('=')[0] == 'years':
-    dt = DL.timedelta(days=365.*float(TL.inputFrequency.split('=')[1])).total_seconds()
-elif TL.inputFrequency.split('=')[0] == 'months':
-    dt = DL.timedelta(days=30*float(TL.inputFrequency.split('=')[1])).total_seconds()
-elif TL.inputFrequency.split('=')[0] == 'days':
-    dt = DL.timedelta(days=float(TL.inputFrequency.split('=')[1])).total_seconds()
-elif TL.inputFrequency.split('=')[0] == 'hours':
-    dt = DL.timedelta(hours=float(TL.inputFrequency.split('=')[1])).total_seconds()
-elif TL.inputFrequency.split('=')[0] == 'minutes':
-    dt = DL.timedelta(minutes=float(TL.inputFrequency.split('=')[1])).total_seconds()
-elif TL.inputFrequency.split('=')[0] == 'seconds':
-    dt = DL.timedelta(seconds=float(TL.inputFrequency.split('=')[1])).total_seconds()
-elif TL.inputFrequency=='yearly':
-    dt = DL.timedelta(days=365).total_seconds()
-elif TL.inputFrequency=='monthly':
-    dt = DL.timedelta(days=30).total_seconds()
-elif TL.inputFrequency=='daily':
-    dt = DL.timedelta(days=1).total_seconds()
-elif TL.inputFrequency=='hourly':
-    dt = DL.timedelta(hours=1).total_seconds()
-elif TL.inputFrequency=='minutely':
-    dt = DL.timedelta(minutes=1).total_seconds()
-elif TL.inputFrequency=='secondely':
-    dt = DL.timedelta(seconds=1).total_seconds()
-
 
 points = np.array([1])
 
 for tt in DateTimeList_2h:
     iyr = tt.year
-    iday = tt.year*1000+datetime.date(tt.year,tt.month,tt.day).timetuple().tm_yday 
-#    if tt.second+tt.minute*60+tt.hour*3600 - dt/2>=0:  #seconds cannot be negative
-    sec_b = tt.second+tt.minute*60+tt.hour*3600 - dt/2
-#    else:
-#        sec_b=0
-    print(sec_b)
-#    if tt.second+tt.minute*60+tt.hour*3600 + dt/2 <= 24*3600: #seconds cannot be negative
-    sec_e = tt.second+tt.minute*60+tt.hour*3600 + dt/2
-#    else:
-#        sec_e = 24*3600
+    iday = datetime.date(tt.year,tt.month,tt.day).timetuple().tm_yday 
+#   iday = tt.year*1000+datetime.date(tt.year,tt.month,tt.day).timetuple().tm_yday 
+    sec   = tt.second+tt.minute*60+tt.hour*3600 
+    sec_b = sec - dt/2
+    sec_e = sec + dt/2
     sp = np.array([102377.13])
     msl = np.array([102410.06])
     ws10 = np.array([10.0])
