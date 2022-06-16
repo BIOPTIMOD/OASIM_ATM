@@ -6,7 +6,8 @@ import datetime
 from commons import genUserDateList as DL
 from commons.Timelist import TimeList
 from commons.utils import Time_Interpolation
-
+import pandas as pd
+import csv
 
 class oasim_lib:
     def __init__(self, lib_path, config_path, lat, lon):
@@ -128,14 +129,24 @@ DateTimeList_2h = DL.getTimeList("20190101-00:00:00","20190102-00:00:00", second
 TL     = TimeList(DateTimeList_2h)
 
 points = np.array([1])
-
-for tt in DateTimeList_2h:
+nframe = len(DateTimeList_2h)
+edout = np.zeros((nframe,33))
+esout = np.zeros((nframe,33))
+year = np.zeros(nframe, dtype=int)
+month = np.zeros(nframe, dtype=int)
+day = np.zeros(nframe, dtype=int)
+hour = np.zeros(nframe, dtype=int)
+for it,tt in enumerate(DateTimeList_2h):
     iyr = tt.year
     iday = datetime.date(tt.year,tt.month,tt.day).timetuple().tm_yday 
 #   iday = tt.year*1000+datetime.date(tt.year,tt.month,tt.day).timetuple().tm_yday 
     sec   = tt.second+tt.minute*60+tt.hour*3600 
     sec_b = sec - dt/2
     sec_e = sec + dt/2
+    year[it]=tt.year
+    month[it]=tt.month
+    day[it]=tt.day
+    hour[it]=tt.hour
     sp = np.array([102377.13])
     msl = np.array([102410.06])
     ws10 = np.array([10.0])
@@ -164,12 +175,22 @@ for tt in DateTimeList_2h:
         0.95303714,0.9326887,0.91252154,0.897008,0.88944095,0.88677096,
         0.89569014,0.89257544,0.88901585]])    
     
-    edout, esout = cunit.monrad(points, iyr, iday, sec_b, sec_e,
+    edout[it,:], esout[it,:] = cunit.monrad(points, iyr, iday, sec_b, sec_e,
                                 sp, msl, ws10, tco3, t2m, d2m, tcc, tclw, cdrem,
                                 taua, asymp, ssalb)
-    
-    print(edout)
-    print(esout)
-    
+
+#import wavelenghts
+wl = pd.read_csv('../data/bin.txt', delim_whitespace=True, header=None).to_numpy()
+wl = np.mean(wl,1).astype(int)
+d={'Year':year, 'Month':month, 'Day':day, 'Hour':hour}
+for iw,w in enumerate(wl):
+    d["ed_"+str(w)]=edout[:,iw]
+for iw,w in enumerate(wl):
+    d["es_"+str(w)]=esout[:,iw]
+
+df=pd.DataFrame(d)
+df.to_csv('prova.txt', index=False)
+
+
 del cunit
 del olib
