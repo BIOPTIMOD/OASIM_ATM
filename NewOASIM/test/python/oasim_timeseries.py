@@ -7,7 +7,7 @@ from commons import genUserDateList as DL
 from commons.Timelist import TimeList
 from commons.utils import Time_Interpolation
 import pandas as pd
-import csv
+import netCDF4 as nc
 
 class oasim_lib:
     def __init__(self, lib_path, config_path, lat, lon):
@@ -136,48 +136,53 @@ year = np.zeros(nframe, dtype=int)
 month = np.zeros(nframe, dtype=int)
 day = np.zeros(nframe, dtype=int)
 hour = np.zeros(nframe, dtype=int)
-for it,tt in enumerate(DateTimeList_2h):
-    iyr = tt.year
-    iday = datetime.date(tt.year,tt.month,tt.day).timetuple().tm_yday 
-#   iday = tt.year*1000+datetime.date(tt.year,tt.month,tt.day).timetuple().tm_yday 
-    sec   = tt.second+tt.minute*60+tt.hour*3600 
-    sec_b = sec - dt/2
-    sec_e = sec + dt/2
-    year[it]=tt.year
-    month[it]=tt.month
-    day[it]=tt.day
-    hour[it]=tt.hour
-    sp = np.array([102377.13])
-    msl = np.array([102410.06])
-    ws10 = np.array([10.0])
-    tco3 = np.array([0.0065])
-    t2m = np.array([286.96487])
-    d2m = np.array([284.10672])
-    tcc = np.array([12.03943])
-    tclw = np.array([0.05])
-    cdrem = np.array([10.042508])
-    taua = np.array([[0.12861817,0.11693237,0.11303711,0.10914185,0.10524658,0.10135132,
-        0.09745605,0.0934308,0.08906767,0.08519087,0.08188277,0.079188,
-        0.07697173,0.07506739,0.07332103,0.07159076,0.06982587,0.06804233,
-        0.0645105,0.05960191,0.05457829,0.05089346,0.0479044,0.04534442,
-        0.04311129,0.04106918,0.03914813,0.0373441,0.03567282,0.03332167,
-        0.02901247,0.01838189,0.00623265]])
-    asymp = np.array([[0.78112185,0.76577055,0.76065344,0.7555364,0.75041926,0.74530214,
-        0.7401851,0.7352586,0.7308154,0.72576404,0.71973574,0.7124992,
-        0.7045832,0.69671303,0.68963724,0.68404067,0.6799671,0.6770385,
-        0.6733678,0.6695107,0.65929943,0.64360243,0.62599105,0.6091321,
-        0.59477234,0.58193725,0.5697906,0.5578721,0.54593724,0.5280586,
-        0.49310532,0.41066745,0.3164527]])
-    ssalb = np.array([[0.9653854,0.9685926,0.96966165,0.9707307,0.9717998,0.97286886,
-        0.9739379,0.9750599,0.97628933,0.97734255,0.97821194,0.9788913,
-        0.9793933,0.97973263,0.9799186,0.9799566,0.9798687,0.9796886,
-        0.9791781,0.9784721,0.9785546,0.9787444,0.97678363,0.96918947,
-        0.95303714,0.9326887,0.91252154,0.897008,0.88944095,0.88677096,
-        0.89569014,0.89257544,0.88901585]])    
-    
-    edout[it,:], esout[it,:] = cunit.monrad(points, iyr, iday, sec_b, sec_e,
-                                sp, msl, ws10, tco3, t2m, d2m, tcc, tclw, cdrem,
-                                taua, asymp, ssalb)
+
+ncname = '/g100_scratch/userexternal/gocchipi/ERA5_Med.nc'
+f = nc.Dataset(ncname)
+for i,time in enumerate(f.variables['time'][:]):
+   for it,tt in enumerate(DateTimeList_2h):
+       iyr = tt.year
+       iday = datetime.date(tt.year,tt.month,tt.day).timetuple().tm_yday 
+   #   iday = tt.year*1000+datetime.date(tt.year,tt.month,tt.day).timetuple().tm_yday 
+       sec   = tt.second+tt.minute*60+tt.hour*3600 
+       sec_b = sec - dt/2
+       sec_e = sec + dt/2
+       year[it]=tt.year
+       month[it]=tt.month
+       day[it]=tt.day
+       hour[it]=tt.hour
+       if time == ((datetime.date(tt.year,tt.month,tt.day)-datetime.date(1900,1,1)).total_seconds()/3600+tt.hour):
+         sp = f.variables['sp'][i,:,:]#np.array([102377.13])
+         msl = f.variables['msl'][i,:,:]#np.array([102410.06])
+         ws10 = f.variables['v10'][i,:,:]#np.array([10.0])
+         tco3 = f.variables['tco3'][i,:,:]#np.array([0.0065])
+         t2m = f.variables['t2m'][i,:,:]#np.array([286.96487])
+         d2m = f.variables['msl'][i,:,:]#np.array([284.10672])
+         tcc = f.variables['sp'][i,:,:]#np.array([12.03943])
+         tclw = f.variables['tclw'][i,:,:]#np.array([0.05])
+       cdrem = np.array([10.042508])
+       taua = np.array([[0.12861817,0.11693237,0.11303711,0.10914185,0.10524658,0.10135132,
+           0.09745605,0.0934308,0.08906767,0.08519087,0.08188277,0.079188,
+           0.07697173,0.07506739,0.07332103,0.07159076,0.06982587,0.06804233,
+           0.0645105,0.05960191,0.05457829,0.05089346,0.0479044,0.04534442,
+           0.04311129,0.04106918,0.03914813,0.0373441,0.03567282,0.03332167,
+           0.02901247,0.01838189,0.00623265]])
+       asymp = np.array([[0.78112185,0.76577055,0.76065344,0.7555364,0.75041926,0.74530214,
+           0.7401851,0.7352586,0.7308154,0.72576404,0.71973574,0.7124992,
+           0.7045832,0.69671303,0.68963724,0.68404067,0.6799671,0.6770385,
+           0.6733678,0.6695107,0.65929943,0.64360243,0.62599105,0.6091321,
+           0.59477234,0.58193725,0.5697906,0.5578721,0.54593724,0.5280586,
+           0.49310532,0.41066745,0.3164527]])
+       ssalb = np.array([[0.9653854,0.9685926,0.96966165,0.9707307,0.9717998,0.97286886,
+           0.9739379,0.9750599,0.97628933,0.97734255,0.97821194,0.9788913,
+           0.9793933,0.97973263,0.9799186,0.9799566,0.9798687,0.9796886,
+           0.9791781,0.9784721,0.9785546,0.9787444,0.97678363,0.96918947,
+           0.95303714,0.9326887,0.91252154,0.897008,0.88944095,0.88677096,
+           0.89569014,0.89257544,0.88901585]])    
+       
+       edout[it,:], esout[it,:] = cunit.monrad(points, iyr, iday, sec_b, sec_e,
+                                   sp, msl, ws10, tco3, t2m, d2m, tcc, tclw, cdrem,
+                                   taua, asymp, ssalb)
 
 #import wavelenghts
 wl = pd.read_csv('../data/bin.txt', delim_whitespace=True, header=None).to_numpy()
