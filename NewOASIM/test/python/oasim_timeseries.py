@@ -120,30 +120,44 @@ class calc_unit:
             self._finalize_calc(self._ptr)
 
 
+#import timelist from data
+TL = TimeList.fromfilenames(None, '/g100_scratch/userexternal/gocchipi/ERA5_Med', "*nc", prefix="ERA5_MED", dateformat="%Y%m%d-%H:%M:%S")
+#import wavelenghts
+wl = pd.read_csv('../data/bin.txt', delim_whitespace=True, header=None).to_numpy()
+wl = np.mean(wl,1).astype(int)
+
 lat = np.array([42.9375], dtype=np.float64, order='F')
 lon = np.array([7.2916665], dtype=np.float64, order='F')
 olib = oasim_lib("../../OASIMlib/liboasim-py.so", "config.yaml", lat, lon)
 cunit = calc_unit(1, olib)
-dt = 7200 #seconds
-DateTimeList_2h = DL.getTimeList("20190101-00:00:00","20190102-00:00:00", seconds=dt)
-TL     = TimeList(DateTimeList_2h)
+dt = (TL.Timelist[1]-TL.Timelist[0]).total_seconds() #seconds
+
+#time interpolation
+dtnew = 15*60. #seconds
+DateTimeList = DL.getTimeList("20190101-00:00:00","20190101-00:02:00", seconds=dtnew) #datelist to be interpolated
+interpolation_id = TL.couple_with(DateTimeList)
+print(interpolation_id)
+interp_timelist = np.copy(DateTimeList)
+for idd,idv in interpolation_id:
+    for j in idv:
+        interp_timelist[j]=idd
+print(interp_timelist)
 
 points = np.array([1])
-nframe = len(DateTimeList_2h)
-edout = np.zeros((nframe,33))
-esout = np.zeros((nframe,33))
+nframe = len(TL.Timelist)
+nwavelengths = len(wl)
+edout = np.zeros((nframe,nwavelengths))
+esout = np.zeros((nframe,nwavelengths))
 year = np.zeros(nframe, dtype=int)
 month = np.zeros(nframe, dtype=int)
 day = np.zeros(nframe, dtype=int)
 hour = np.zeros(nframe, dtype=int)
 
-ncname = '/g100_scratch/userexternal/gocchipi/ERA5_Med.nc'
-f = nc.Dataset(ncname)
-for i,time in enumerate(f.variables['time'][:]):
-   for it,tt in enumerate(DateTimeList_2h):
+for it,tt in enumerate(TL.Timelist[:10]):
+       ncname = TL.filelist[it]
+       f = nc.Dataset(ncname)
        iyr = tt.year
        iday = datetime.date(tt.year,tt.month,tt.day).timetuple().tm_yday 
-   #   iday = tt.year*1000+datetime.date(tt.year,tt.month,tt.day).timetuple().tm_yday 
        sec   = tt.second+tt.minute*60+tt.hour*3600 
        sec_b = sec - dt/2
        sec_e = sec + dt/2
@@ -151,15 +165,14 @@ for i,time in enumerate(f.variables['time'][:]):
        month[it]=tt.month
        day[it]=tt.day
        hour[it]=tt.hour
-       if time == ((datetime.date(tt.year,tt.month,tt.day)-datetime.date(1900,1,1)).total_seconds()/3600+tt.hour):
-         sp = f.variables['sp'][i,:,:]#np.array([102377.13])
-         msl = f.variables['msl'][i,:,:]#np.array([102410.06])
-         ws10 = f.variables['v10'][i,:,:]#np.array([10.0])
-         tco3 = f.variables['tco3'][i,:,:]#np.array([0.0065])
-         t2m = f.variables['t2m'][i,:,:]#np.array([286.96487])
-         d2m = f.variables['msl'][i,:,:]#np.array([284.10672])
-         tcc = f.variables['sp'][i,:,:]#np.array([12.03943])
-         tclw = f.variables['tclw'][i,:,:]#np.array([0.05])
+       sp = f.variables['sp'][:,:,:]#np.array([102377.13])
+       msl = f.variables['msl'][:,:,:]#np.array([102410.06])
+       ws10 = f.variables['v10'][:,:,:]#np.array([10.0])
+       tco3 = f.variables['tco3'][:,:,:]#np.array([0.0065])
+       t2m = f.variables['t2m'][:,:,:]#np.array([286.96487])
+       d2m = f.variables['msl'][:,:,:]#np.array([284.10672])
+       tcc = f.variables['sp'][:,:,:]#np.array([12.03943])
+       tclw = f.variables['tclw'][:,:,:]#np.array([0.05])
        cdrem = np.array([10.042508])
        taua = np.array([[0.12861817,0.11693237,0.11303711,0.10914185,0.10524658,0.10135132,
            0.09745605,0.0934308,0.08906767,0.08519087,0.08188277,0.079188,
