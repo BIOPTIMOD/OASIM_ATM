@@ -6,6 +6,7 @@ import datetime
 from commons import genUserDateList as DL
 from commons.Timelist import TimeList
 from commons.utils import Time_Interpolation
+from commons.mask import Mask
 import pandas as pd
 import netCDF4 as nc
 
@@ -143,6 +144,14 @@ for idd,idv in interpolation_id:
         interp_timelist[j]=idd
 print(interp_timelist)
 
+#spatial mash
+from commons.mask import Mask
+TheMask = Mask('/g100_work/OGS_prod100/OPA/V9C/RUNS_SETUP/PREPROC/MASK/meshmask.nc')
+lon_point=15
+lat_point=34
+i, j = TheMask.convert_lon_lat_to_indices(lon_point, lat_point)
+print(i,j)
+
 points = np.array([1])
 nframe = len(TL.Timelist)
 nwavelengths = len(wl)
@@ -196,7 +205,7 @@ for it,tt in enumerate(TL.Timelist[:10]):
        edout[it,:], esout[it,:] = cunit.monrad(points, iyr, iday, sec_b, sec_e,
                                    sp, msl, ws10, tco3, t2m, d2m, tcc, tclw, cdrem,
                                    taua, asymp, ssalb)
-
+print(f.variables['tclw'][:,:,:].shape)
 #import wavelenghts
 wl = pd.read_csv('../data/bin.txt', delim_whitespace=True, header=None).to_numpy()
 wl = np.mean(wl,1).astype(int)
