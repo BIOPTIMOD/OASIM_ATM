@@ -96,25 +96,25 @@ def dumpfile(filename, maskObj, sp,msl,u10,v10,tco3,t2m,d2m,tcc,tclw):
 
     ncvar = ncOUT.createVariable('sp','f',('lat','lon'))
     ncvar[:]=sp
-    setattr(ncvar, 'long_name',  'TODO' )
-    setattr(ncvar, 'units','TODO' )
+    setattr(ncvar, 'long_name',  'surface pressure' )
+    setattr(ncvar, 'units','Pa' )
     setattr(ncvar, 'orig', 'ERA5' )
 
     ncvar = ncOUT.createVariable('msl','f',('lat','lon'))
     ncvar[:]=msl
-    setattr(ncvar, 'long_name',  'TODO' )
-    setattr(ncvar, 'units','TODO' )
+    setattr(ncvar, 'long_name',  'mean sea level pressure' )
+    setattr(ncvar, 'units','Pa' )
     setattr(ncvar, 'orig', 'ERA5')
 
     ncvar = ncOUT.createVariable('u10','f',('lat','lon'))
     ncvar[:]=u10
-    setattr(ncvar, 'long_name',  'TODO' )
+    setattr(ncvar, 'long_name',  'zonal wind velocity' )
     setattr(ncvar, 'units','m s*-1' )
     setattr(ncvar, 'orig', 'ERA5')
 
     ncvar = ncOUT.createVariable('v10','f',('lat','lon'))
     ncvar[:]=v10
-    setattr(ncvar, 'long_name',  'TODO' )
+    setattr(ncvar, 'long_name',  'meridional wind velocity' )
     setattr(ncvar, 'units','m s*-1' )
     setattr(ncvar, 'orig', 'ERA5')
     
@@ -132,14 +132,14 @@ def dumpfile(filename, maskObj, sp,msl,u10,v10,tco3,t2m,d2m,tcc,tclw):
 
     ncvar = ncOUT.createVariable('t2m','f',('lat','lon'))
     ncvar[:]=t2m
-    setattr(ncvar, 'long_name',  'TODO' )
-    setattr(ncvar, 'units','TODO' )
+    setattr(ncvar, 'long_name',  '2 metre temperature' )
+    setattr(ncvar, 'units','K' )
     setattr(ncvar, 'orig', 'ERA5')
 
     ncvar = ncOUT.createVariable('d2m','f',('lat','lon'))
     ncvar[:]=d2m
-    setattr(ncvar, 'long_name',  'TODO' )
-    setattr(ncvar, 'units','TODO' )
+    setattr(ncvar, 'long_name',  '2 metre dewpoint temperature' )
+    setattr(ncvar, 'units','K' )
     setattr(ncvar, 'orig', 'ERA5')
 
     ncvar = ncOUT.createVariable('tcc','f',('lat','lon'))
@@ -161,7 +161,7 @@ lat_era5 = netcdf4.readfile(era5file0, 'latitude')
 print(lon_era5)
 print(lat_era5)
 
-for it,inputfile in enumerate(TL.filelist[:10]):
+for it,inputfile in enumerate(TL.filelist[:]):
 
     print('Processing... ' + inputfile)
     sp   = getMap(inputfile, 'sp',lon_era5,lat_era5)
