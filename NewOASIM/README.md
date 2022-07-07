@@ -143,18 +143,18 @@ the input are the following (here `bin_n` is the number of the bin specified in 
 - `day` (`integer`): specify the day of the year of the simulation;
 - `sec_b` (`real (kind=real_kind)`): specify the beginning second of the day of the simulation;
 - `sec_e` (`real (kind=real_kind)`): specify the end second of the day of the simulation;
-- `sp` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `msl` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `ws10` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `tc03` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `t2m` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `d2m` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `tcc` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `tclw` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `cdrem` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `taua` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` x `bin_n` length;
-- `asymp` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` x `bin_n` length;
-- `ssalb` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` x `bin_n` length;
+- `sp` (`real (kind=real_kind), dimension(:)`): surface pressure [Pa], must have `size_p` length;
+- `msl` (`real (kind=real_kind), dimension(:)`): air pressure at mean sea level [Pa], must have `size_p` length;
+- `ws10` (`real (kind=real_kind), dimension(:)`): wind Speed [m/s], must have `size_p` length;
+- `tc03` (`real (kind=real_kind), dimension(:)`): total column ozone [kg m^-2] , must have `size_p` length;
+- `t2m` (`real (kind=real_kind), dimension(:)`): 2 metre temperature [K], must have `size_p` length;
+- `d2m` (`real (kind=real_kind), dimension(:)`): 2 metre dewpoint temperature [K], must have `size_p` length;
+- `tcc` (`real (kind=real_kind), dimension(:)`): total cloud cover [0-100], must have `size_p` length;
+- `tclw` (`real (kind=real_kind), dimension(:)`): total column cloud liquid water [kg m^-2], must have `size_p` length;
+- `cdrem` (`real (kind=real_kind), dimension(:)`): cloud droplet effective radius [um], must have `size_p` length;
+- `taua` (`real (kind=real_kind), dimension(:)`): aerosol optical thickness, must have `size_p` x `bin_n` length;
+- `asymp` (`real (kind=real_kind), dimension(:)`): aerosol asymmetry parameter, must have `size_p` x `bin_n` length;
+- `ssalb` (`real (kind=real_kind), dimension(:)`): aerosol single scattering albedo [-], must have `size_p` x `bin_n` length;
 
 the output are the following
 
