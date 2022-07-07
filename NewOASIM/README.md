@@ -68,8 +68,8 @@ compute:                               # compute section
     max_integration_steps:             # integer: specify the maximum number of steps of integrations (see below)
     zenit_avg:                         # boolean: specify whether to use average zenith angle instead of integration
     local_time:                        # boolean: specify whether to use local time
-    am:                                # am paramer of the model
-    vi:                                # vi parameter of the model
+    am:                                # Air-mass type; ranges from 1 (open-ocean aerosols) to 10 (continental aerosols)
+    vi:                                # Visibility, km
 output:                                # output section
     bin_file:                          # string: specify the path of file containing the output binning
 ```
