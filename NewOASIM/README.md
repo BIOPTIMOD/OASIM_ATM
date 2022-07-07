@@ -76,7 +76,7 @@ output:                                # output section
 
 #### Integration
 
-The of the sine of the solar zenith angle is performed if the `zenith_avg` parameter is `false`. Otherwise the sine of the zenith angle at the beginning of the interval is used. In the case of integration one can specify two parameters: `integration_step_secs` specify the width of the integration interval in seconds; the second parameter `max_integration_steps` is used to limit the maximum number of integration step. Therefore the actual number of integration steps is the minimum between the floor of the one obtained dividing the interval by `integration_step_secs` and `max_integration_steps`.
+The integration of the sine of the solar zenith angle is performed if the `zenith_avg` parameter is `false`. Otherwise the sine of the zenith angle at the beginning of the interval is used. In the case of integration one can specify two parameters: `integration_step_secs` specify the width of the integration interval in seconds; the second parameter `max_integration_steps` is used to limit the maximum number of integration step. Therefore the actual number of integration steps is the minimum between the floor of the one obtained dividing the interval by `integration_step_secs` and `max_integration_steps`.
 
 #### Data file format
 
