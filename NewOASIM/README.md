@@ -158,8 +158,8 @@ the input are the following (here `bin_n` is the number of the bin specified in 
 
 the output are the following
 
-- `edout` (`real (kind=real_kind), dimension(:)`): contains ..., must have `size_p` length;
-- `esout` (`real (kind=real_kind), dimension(:)`): contains ..., must have `size_p` length;
+- `edout` (`real (kind=real_kind), dimension(:)`): contains binned direct downward irradiance [Wm^-2], must have `size_p` length;
+- `esout` (`real (kind=real_kind), dimension(:)`): contains binned diffuse downward irradiance [Wm^-2], must have `size_p` length;
 - `error` (`logical`): it signals error in the computation procedure.
 
 ### Python
