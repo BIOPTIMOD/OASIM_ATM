@@ -151,8 +151,8 @@ TL_MODIS_AER = TimeList.fromfilenames(None, datadir, "MODIS_AEROSOL_MED*nc", pre
 TL_MODIS_CLD = TimeList.fromfilenames(None, datadir, "MODIS_CLD_MED*nc", prefix="MODIS_CLD_MED.", dateformat="%Y%m%d-%H:%M:%S")
 
 #output time iframes
-dtnew = 15*60. #15 minutes in seconds
-OUT_Timelist = DL.getTimeList("20190115-00:00:00","20191215-00:00:00", seconds=dtnew) #datelist to be interpolated
+dtnew = 60.*60. #time interval in seconds
+OUT_Timelist = DL.getTimeList("20190115-00:00:00","20211215-00:00:00", seconds=dtnew) #datelist to be interpolated
 
 #import wavelenghts
 wl = pd.read_csv('../data/bin.txt', delim_whitespace=True, header=None).to_numpy()
@@ -335,7 +335,7 @@ for iw,w in enumerate(wl):
     d["ssalb"+str(w)]  = ssalb[0,:,iw]
 
 df=pd.DataFrame(d)
-outfile=location + '2019.txt'
+outfile=location + '2019-2021.txt'
 df.to_csv(outfile, index=False)
 
 

@@ -68,15 +68,15 @@ compute:                               # compute section
     max_integration_steps:             # integer: specify the maximum number of steps of integrations (see below)
     zenit_avg:                         # boolean: specify whether to use average zenith angle instead of integration
     local_time:                        # boolean: specify whether to use local time
-    am:                                # am paramer of the model
-    vi:                                # vi parameter of the model
+    am:                                # Air-mass type; ranges from 1 (open-ocean aerosols) to 10 (continental aerosols)
+    vi:                                # Visibility, km
 output:                                # output section
     bin_file:                          # string: specify the path of file containing the output binning
 ```
 
 #### Integration
 
-The of the sine of the solar zenith angle is performed if the `zenith_avg` parameter is `false`. Otherwise the sine of the zenith angle at the beginning of the interval is used. In the case of integration one can specify two parameters: `integration_step_secs` specify the width of the integration interval in seconds; the second parameter `max_integration_steps` is used to limit the maximum number of integration step. Therefore the actual number of integration steps is the minimum between the floor of the one obtained dividing the interval by `integration_step_secs` and `max_integration_steps`.
+The integration of the sine of the solar zenith angle is performed if the `zenith_avg` parameter is `false`. Otherwise the sine of the zenith angle at the beginning of the interval is used. In the case of integration one can specify two parameters: `integration_step_secs` specify the width of the integration interval in seconds; the second parameter `max_integration_steps` is used to limit the maximum number of integration steps. Therefore the actual number of integration steps is the minimum between the floor of the one obtained dividing the interval by `integration_step_secs` and `max_integration_steps`.
 
 #### Data file format
 
@@ -143,23 +143,23 @@ the input are the following (here `bin_n` is the number of the bin specified in 
 - `day` (`integer`): specify the day of the year of the simulation;
 - `sec_b` (`real (kind=real_kind)`): specify the beginning second of the day of the simulation;
 - `sec_e` (`real (kind=real_kind)`): specify the end second of the day of the simulation;
-- `sp` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `msl` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `ws10` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `tc03` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `t2m` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `d2m` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `tcc` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `tclw` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `cdrem` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` length;
-- `taua` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` x `bin_n` length;
-- `asymp` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` x `bin_n` length;
-- `ssalb` (`real (kind=real_kind), dimension(:)`): specify ..., must have `size_p` x `bin_n` length;
+- `sp` (`real (kind=real_kind), dimension(:)`): surface pressure [Pa], must have `size_p` length;
+- `msl` (`real (kind=real_kind), dimension(:)`): air pressure at mean sea level [Pa], must have `size_p` length;
+- `ws10` (`real (kind=real_kind), dimension(:)`): wind Speed [m/s], must have `size_p` length;
+- `tc03` (`real (kind=real_kind), dimension(:)`): total column ozone [kg m^-2] , must have `size_p` length;
+- `t2m` (`real (kind=real_kind), dimension(:)`): 2 metre temperature [K], must have `size_p` length;
+- `d2m` (`real (kind=real_kind), dimension(:)`): 2 metre dewpoint temperature [K], must have `size_p` length;
+- `tcc` (`real (kind=real_kind), dimension(:)`): total cloud cover [0-100], must have `size_p` length;
+- `tclw` (`real (kind=real_kind), dimension(:)`): total column cloud liquid water [kg m^-2], must have `size_p` length;
+- `cdrem` (`real (kind=real_kind), dimension(:)`): cloud droplet effective radius [um], must have `size_p` length;
+- `taua` (`real (kind=real_kind), dimension(:)`): aerosol optical thickness, must have `size_p` x `bin_n` length;
+- `asymp` (`real (kind=real_kind), dimension(:)`): aerosol asymmetry parameter, must have `size_p` x `bin_n` length;
+- `ssalb` (`real (kind=real_kind), dimension(:)`): aerosol single scattering albedo [-], must have `size_p` x `bin_n` length;
 
 the output are the following
 
-- `edout` (`real (kind=real_kind), dimension(:)`): contains ..., must have `size_p` length;
-- `esout` (`real (kind=real_kind), dimension(:)`): contains ..., must have `size_p` length;
+- `edout` (`real (kind=real_kind), dimension(:)`): contains binned direct downward irradiance [W m^-2], must have `size_p` x `bin_n` length;
+- `esout` (`real (kind=real_kind), dimension(:)`): contains binned diffuse downward irradiance [W m^-2], must have `size_p` x `bin_n` length;
 - `error` (`logical`): it signals error in the computation procedure.
 
 ### Python
