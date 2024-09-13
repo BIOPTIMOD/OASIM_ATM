@@ -2,8 +2,8 @@ import argparse
 
 def argument():
     parser = argparse.ArgumentParser(description = '''
-    Generates monthly clim files for OASIM by cutting and interpolating:
-    - NASA modaer climatology files for: taua asymp ssalb
+    Generates monthly files for OASIM by cutting and interpolating
+    NASA modaer files for: taua asymp ssalb
     ''',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
@@ -23,6 +23,10 @@ def argument():
                                 required = True,
                                 help = ''' path of the output optical dir '''
                                 )
+    parser.add_argument(   '--clim',
+                                action = "store_true",
+                                help = ''' To work in monthly climatological mode'''
+                                )
 
     return parser.parse_args()
 
@@ -30,7 +34,7 @@ def argument():
 args = argument()
 
 
-
+from commons.Timelist import TimeList
 from commons import netcdf4
 import netCDF4
 from commons.mask import Mask
@@ -72,7 +76,12 @@ xMax = TheMask.xlevels[0,-1]
 yMin = TheMask.ylevels[0,0]
 yMax = TheMask.ylevels[-1,0]
 
-inputfile="%smodaer%02d.nc" %(INPUTDIR, 1)
+if args.clim:
+    inputfile="%smodaer%02d.nc" %(INPUTDIR, 1)
+else:
+    TL = TimeList.fromfilenames(None, INPUTDIR, "*nc", prefix="modaer", dateformat="%Y%m")
+    inputfile=TL.filelist[0]
+
 lon = netcdf4.readfile(inputfile, 'lon')
 lat = netcdf4.readfile(inputfile, 'lat')
 
@@ -131,34 +140,45 @@ def dumpfile(filename, maskObj, taua,asymp,ssalb):
 
     ncvar = ncOUT.createVariable('taua','f',('depth','lat','lon'), zlib=True, fill_value=1.0e+20)
     ncvar[:]=taua
-    setattr(ncvar, 'long_name',  'TODO' )
-    setattr(ncvar, 'units','TODO' )
+    setattr(ncvar, 'long_name',  'aerosol optical thickness' )
+    setattr(ncvar, 'units','[-]' )
+    setattr(ncvar, 'orig', 'MODIS_AEROSOL' )
 
     ncvar = ncOUT.createVariable('asymp','f',('depth','lat','lon'), zlib=True, fill_value=1.0e+20)
     ncvar[:]=asymp
-    setattr(ncvar, 'long_name',  'TODO' )
-    setattr(ncvar, 'units','TODO' )
+    setattr(ncvar, 'long_name',  'aerosol asymmetry parameter' )
+    setattr(ncvar, 'units','[-]' )
+    setattr(ncvar, 'orig', 'MODIS_AEROSOL' )
 
     ncvar = ncOUT.createVariable('ssalb','f',('depth','lat','lon'), zlib=True, fill_value=1.0e+20)
     ncvar[:]=ssalb
-    setattr(ncvar, 'long_name',  'TODO' )
-    setattr(ncvar, 'units','TODO' )
+    setattr(ncvar, 'long_name',  'aerosol single scattering albedo' )
+    setattr(ncvar, 'units','[-]' )
+    setattr(ncvar, 'orig', 'MODIS_AEROSOL' )
 
 
     ncOUT.close()
 
 
 
+if args.clim:
+    for iframe in range(1,13):
+        inputfile = "%smodaer%02d.nc" %(INPUTDIR, iframe)
+        outfile = "%saero.yyyy%02d15-00:00:00.nc" %(OUTDIR,iframe)
+        print(outfile)
+        taua  = readfile(inputfile,TheMask,'taua')
+        asymp = readfile(inputfile,TheMask,'asymp')
+        ssalb = readfile(inputfile,TheMask,'ssalb')
 
+        dumpfile(outfile,TheMask,taua,asymp,ssalb)
+else:
 
+    dateformat="%Y%m%d-%H:%M:%S"
+    for it, inputfile in enumerate(TL.filelist):
+        outfile = "%saero.%s.nc" %(OUTDIR, TL.Timelist[it].strftime(dateformat))
+        print(outfile)
+        taua  = readfile(inputfile,TheMask,'taua')
+        asymp = readfile(inputfile,TheMask,'asymp')
+        ssalb = readfile(inputfile,TheMask,'ssalb')
 
-
-for iframe in range(1,13):
-    inputfile = "%smodaer%02d.nc" %(INPUTDIR, iframe)
-    outfile = "%saero.yyyy%02d15-00:00:00.nc" %(OUTDIR,iframe)
-    print(outfile)
-    taua  = readfile(inputfile,TheMask,'taua')
-    asymp = readfile(inputfile,TheMask,'asymp')
-    ssalb = readfile(inputfile,TheMask,'ssalb')
-
-    dumpfile(outfile,TheMask,taua,asymp,ssalb)
+        dumpfile(outfile,TheMask,taua,asymp,ssalb)
