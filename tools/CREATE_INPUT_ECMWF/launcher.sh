@@ -27,29 +27,29 @@ unset I_MPI_PMI_LIBRARY
 export UCX_TLS=ib
 export SLURM_PMIX_DIRECT_CONN_UCX=false
 
-MASKFILE=/g100_work/OGS_prod100/OPA/V9C/RUNS_SETUP/PREPROC/MASK/meshmask.nc
+MASKFILE=/g100_work/OGS_devC/V9C/RUNS_SETUP/PREPROC/MASK/meshmask.nc
 
-INPUTDIR=/g100_work/OGS_prod100/OPA/V9C/RUNS_SETUP/PREPROC/OPTICS/ORIG_ATM_CMCC
+INPUTDIR=/g100_work/OGS_devC/V9C/RUNS_SETUP/PREPROC/OPTICS/ORIG_ATM_CMCC
 
-OUTDIR=/g100_work/OGS_prod100/OPA/V9C/RUNS_SETUP/PREPROC/OPTICS/READY_FOR_MODEL/
+OUTDIR=/g100_work/OGS_devC/V9C/RUNS_SETUP/PREPROC/OPTICS/READY_FOR_MODEL/
 
 my_prex_or_die "mpirun python daily_oasim_input_gen.py -i $INPUTDIR -o $OUTDIR  -m $MASKFILE"
 
-ORIG_ERA5=/g100_work/OGS_prod100/OPA/V9C/RUNS_SETUP/PREPROC/OPTICS/ERA5/ # downloaded by plazzari
-CLIM_ERA5=/g100_work/OGS_prod100/OPA/V9C/RUNS_SETUP/PREPROC/OPTICS/CLIM_ERA5/
+ORIG_ERA5=/g100_work/OGS_devC/V9C/RUNS_SETUP/PREPROC/OPTICS/ERA5/ # downloaded by plazzari
+CLIM_ERA5=/g100_work/OGS_devC/V9C/RUNS_SETUP/PREPROC/OPTICS/CLIM_ERA5/
 
 my_prex_or_die "python era5_climatology.py -i $ORIG_ERA5 -o $CLIM_ERA5"
 
 ## MODCLD SECTION ###
 # DIR with modcldyyyymm.dat --> conversion to NETCDF --> ncea to have modcldmm.nc
-CLIM_MODCLD=/g100_work/OGS_prod100/OPA/V9C/RUNS_SETUP/PREPROC/OPTICS/MODCLD/clim/monthly
+CLIM_MODCLD=/g100_work/OGS_devC/V9C/RUNS_SETUP/PREPROC/OPTICS/MODCLD/clim/monthly
 
 ## Putting together  ##
 my_prex_or_die "python monthly_clim_gen.py -e $CLIM_ERA5 -M $CLIM_MODCLD -o $OUTDIR -m $MASKFILE"
 
 ## AEROSOL SECTION ###
 # DIR with modaer.dat --> conversion to NetCDF --> ncea to have modaermm.nc
-NASA_CLIM=/g100_work/OGS_prod100/OPA/V9C/RUNS_SETUP/PREPROC/OPTICS/modaer_NASA/clim/monthly
+NASA_CLIM=/g100_work/OGS_devC/V9C/RUNS_SETUP/PREPROC/OPTICS/modaer_NASA/clim/monthly
 
 my_prex_or_die "python aerosol.py -i $NASA_CLIM -m $MASKFILE -o $OUTDIR"
 
