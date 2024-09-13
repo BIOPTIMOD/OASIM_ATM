@@ -47,7 +47,7 @@ OUT_MODIS=/g100_scratch/userexternal/plazzari/TEST_ERA5/READY_FOR_MODEL
 ORIG_NASA=/g100_scratch/userexternal/plazzari/OASIM/modaer/NC
 OUT_NASA=/g100_scratch/userexternal/plazzari/TEST_ERA5/READY_FOR_MODEL
 
-my_prex_or_die "python AEROSOL_indata_gen.py -A $ORIG_NASA -m $MASKFILE -o $OUT_NASA"
+my_prex_or_die "python aerosol.py -A $ORIG_NASA -m $MASKFILE -o $OUT_NASA"
 
 
 
