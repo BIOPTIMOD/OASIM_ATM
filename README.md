@@ -1,6 +1,7 @@
 # NewOASIM library
 
 NewOASIM library is a re-implementation of OASIM software developed by NASA. It comes with two shared objects: `liboasim.so`, a Fortran 2018 implementation and a Python wrapper `liboasim-py.so` which can be used with `ctypes` module in Python.
+The model implementation has been developed within the service evolution project [BIOPTIMOD](https://www.mercator-ocean.eu/en/portfolio/bioptimod/) and [validated](https://doi.org/10.5194/os-17-675-2021) for the Mediterranean Sea at the BOUSSOLE mooring site. It is currently used as part of the bio-optical module in biogeochemical  operational oceanography within [Marine Copernicus](a.https://data.marine.copernicus.eu/product/MEDSEA_ANALYSISFORECAST_BGC_006_014/description).
 
 ## Main Features
 
