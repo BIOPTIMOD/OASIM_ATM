@@ -15,7 +15,7 @@ add_library(oasim SHARED oasim.f90
                          sfcirr.f90
                          sfcsolz.f90
                          monrad.f90)
-target_link_libraries(oasim PUBLIC yaml common)
+target_link_libraries(oasim PUBLIC yaml_oasim common)
 
 add_library(oasim-py SHARED oasim-py.f90)
 target_link_libraries(oasim-py PUBLIC oasim)

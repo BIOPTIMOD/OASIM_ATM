@@ -14,12 +14,12 @@
 ! A copy of the license is provided in the COPYING file.
 ! -----------------------------------------------------------------------------
 
-program test_yaml
+program test_yaml_oasim
 
-   use yaml_version, only: yaml_commit_id=>git_commit_id, &
+   use yaml_oasim_version, only: yaml_commit_id=>git_commit_id, &
                            yaml_branch_name=>git_branch_name
-   use yaml_types
-   use yaml
+   use yaml_oasim_types
+   use yaml_oasim
    use, intrinsic :: iso_fortran_env
 
    character(error_length) :: error

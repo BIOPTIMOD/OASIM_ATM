@@ -1,12 +1,12 @@
-module yaml_settings
+module yaml_oasim_settings
 
    use iso_fortran_env, only: error_unit
 
    use oasim_common, only: yaml_real_kind => real_kind
-   use yaml_types, only: type_yaml_node => type_node, type_yaml_null => type_null, &
+   use yaml_oasim_types, only: type_yaml_node => type_node, type_yaml_null => type_null, &
       type_yaml_scalar => type_scalar, type_yaml_dictionary => type_dictionary, type_yaml_list => type_list, &
       type_yaml_list_item => type_list_item, type_yaml_error => type_error, type_yaml_key_value_pair => type_key_value_pair
-   use yaml, only: yaml_parse => parse, yaml_error_length => error_length
+   use yaml_oasim, only: yaml_parse => parse, yaml_error_length => error_length
 
    implicit none
 
@@ -1786,4 +1786,4 @@ contains
       line%text = text
    end subroutine
 
-end module yaml_settings
+end module yaml_oasim_settings

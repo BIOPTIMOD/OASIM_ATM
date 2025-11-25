@@ -14,9 +14,9 @@
 ! A copy of the license is provided in the COPYING file.
 ! -----------------------------------------------------------------------------
 
-module yaml
+module yaml_oasim
 
-   use yaml_types
+   use yaml_oasim_types
 
    implicit none
 
@@ -317,4 +317,4 @@ contains
       file%has_error = .true.
    end subroutine
 
-end module yaml
+end module yaml_oasim

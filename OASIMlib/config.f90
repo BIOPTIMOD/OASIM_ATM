@@ -1,8 +1,8 @@
 module configuration
     use, intrinsic :: iso_fortran_env
     use oasim_common
-    use yaml_types, only: type_node, type_dictionary, type_error
-    use yaml, only: parse, error_length
+    use yaml_oasim_types, only: type_node, type_dictionary, type_error
+    use yaml_oasim, only: parse, error_length
 
     implicit none
 
