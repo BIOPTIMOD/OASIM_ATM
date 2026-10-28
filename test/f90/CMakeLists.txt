@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
  
 add_executable(test test.f90)
 set_target_properties(test PROPERTIES SUFFIX ".x")
