@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.10)
  
 add_library(common OBJECT common.f90)
 set_property(TARGET common PROPERTY POSITION_INDEPENDENT_CODE ON)
